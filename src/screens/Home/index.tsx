@@ -1,14 +1,24 @@
 import React from 'react';
+import {StatusBar} from 'react-native';
+
+import Logo from '../../assets/logo.svg'
 
 import {
   Container, 
-  Title,
+  Header,
 } from './styles';
 
 export function Home(){
   return (
     <Container>
-      <Title>HOME</Title>
+      <StatusBar
+        barStyle="light-content"
+        backgroundColor="transparent" // SETA O STATUSBAR COMO TRANSPARENT
+        translucent // STATUSBAR SOBREPOE O HEADER
+      />
+      <Header>
+        <Logo/>
+      </Header>
     </Container>
   );
 }
