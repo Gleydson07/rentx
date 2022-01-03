@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigation } from '@react-navigation/native';
 import {StatusBar} from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 
@@ -14,6 +15,12 @@ import {
 } from './styles';
 
 export function Home(){
+  const navigation = useNavigation<any>();
+
+  function handleConfirmRental(){
+    navigation.navigate("CarDetails")
+  }
+
   const carMock:CarProps = {
     brand: "AUDI",
     name: "RS 5 Coupé",
@@ -28,6 +35,8 @@ export function Home(){
     carMock,
     carMock,
   ]
+
+
 
   return (
     <Container>
@@ -51,6 +60,7 @@ export function Home(){
           name={carMock.name}
           rent={carMock.rent}
           thumbnail={carMock.thumbnail}
+          onPress={handleConfirmRental}
         />}
       />
       

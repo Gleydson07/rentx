@@ -1,10 +1,14 @@
 import React from 'react';
+import {Feather} from '@expo/vector-icons';
+import { RFValue } from 'react-native-responsive-fontsize';
 import { useNavigation } from '@react-navigation/native';
 
-import { Button } from '../../components/Button';
 import { Accessory } from '../../components/Accessory';
 import { BackButton } from '../../components/BackButton';
 import { ImageSlider } from '../../components/ImageSlider';
+import { Button } from '../../components/Button';
+
+import { useTheme } from 'styled-components';
 
 import speedSvg from '../../assets/speed.svg';
 import accelerateSvg from '../../assets/acceleration.svg';
@@ -25,20 +29,30 @@ import {
   Rent,
   Period,
   Price,
-  About,
   Accessories,
-  Footer
+  Footer,
+  RentalPeriod,
+  CalendarIcon,
+  DateInfo,
+  DateTitle,
+  DateValue,
+  RentalPrice,
+  RentalPriceLabel,
+  RentalPriceDetails,
+  RentalPriceQuote,
+  RentalPriceTotal
 } from './styles';
 
 const imagesUrlList = [
   "https://www.webmotors.com.br/imagens/prod/348415/AUDI_RS5_2.9_V6_TFSI_GASOLINA_SPORTBACK_QUATTRO_STRONIC_34841515593745747.png?s=fill&w=440&h=330&q=80&t=true"
 ]
 
-export function CarDetails(){
+export function ScheduleCarDetails(){
+  const theme = useTheme();
   const navigation = useNavigation<any>();
 
   function handleConfirmRental(){
-    navigation.navigate('Schedule');
+    navigation.navigate('ScheduleCompleted');
   }
 
   return (
@@ -75,14 +89,43 @@ export function CarDetails(){
           <Accessory name="2 pessoas" icon={peopleSvg}/>
         </Accessories>
 
-        <About>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Quasi, rem qui voluptatum id autem similique reiciendis eaque laborum culpa sed consequuntur natus. 
-        </About>
+        <RentalPeriod>
+          <CalendarIcon>
+            <Feather
+              name="calendar"
+              size={RFValue(24)}
+              color={theme.colors.shape}
+            />
+          </CalendarIcon>
 
+          <DateInfo>
+            <DateTitle>DE</DateTitle>
+            <DateValue>02/01/2022</DateValue>
+          </DateInfo>
+
+          <Feather
+            name="chevron-right"
+            size={RFValue(10)}
+            color={theme.colors.text}
+          />
+
+          <DateInfo>
+            <DateTitle>ATÉ</DateTitle>
+            <DateValue>02/01/2022</DateValue>
+          </DateInfo>
+        </RentalPeriod>
+
+        <RentalPrice>
+          <RentalPriceLabel>Total</RentalPriceLabel>
+          <RentalPriceDetails>
+            <RentalPriceQuote>R$ 580 x 3 diárias</RentalPriceQuote>
+            <RentalPriceTotal>R$ 2.740</RentalPriceTotal>
+          </RentalPriceDetails>
+        </RentalPrice>
       </Content>
 
       <Footer>
-        <Button title="Escolher período do aluguel" onPress={handleConfirmRental}/>
+        <Button title="Alugar agora" color={theme.colors.success} onPress={handleConfirmRental}/>
       </Footer>
     </Container>
   );
