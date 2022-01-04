@@ -25,6 +25,10 @@ export function Schedule(){
   const theme = useTheme();
   const navigation = useNavigation<any>();
 
+  function handleBack(){
+    navigation.goBack();
+  }
+
   function handleConfirmRental(){
     navigation.navigate('ScheduleCarDetails');
   }
@@ -38,7 +42,7 @@ export function Schedule(){
       />
       <Header>
         <BackButton 
-          onPress={() => {}}
+          onPress={handleBack}
           color={theme.colors.shape}
         />
         <Title>

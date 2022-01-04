@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import {StatusBar} from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 
+import api from '../../services/api';
+
 import Logo from '../../assets/logo.svg'
-import { Car, CarProps } from '../../components/Car';
+import { Car } from '../../components/Car';
+import { CarDTO } from '../../dtos/CarDTO';
 
 import {
   Container, 
@@ -13,30 +16,32 @@ import {
   TotalCars,
   CarList,
 } from './styles';
+import { Load } from '../../components/Load';
 
 export function Home(){
   const navigation = useNavigation<any>();
+  const [cars, setCars] = useState<CarDTO[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  function handleConfirmRental(){
-    navigation.navigate("CarDetails")
+  function handleConfirmRental(car: CarDTO){
+    navigation.navigate("CarDetails", {car})
   }
 
-  const carMock:CarProps = {
-    brand: "AUDI",
-    name: "RS 5 Coupé",
-    rent: {
-      period: "Ao dia",
-      price: 120,
-    },
-    thumbnail: "https://freepngimg.com/thumb/audi/35227-5-audi-rs5-red.png"
-  } 
+  async function loadCars(){
+    setIsLoading(true);
+    try {
+      const response = await api.get("/cars");
+      response.data ? setCars(response.data) : setCars([])      
+    } catch (error) {
+     console.log(error) 
+    }finally{
+      setIsLoading(false);
+    }
+  }
 
-  const arrayCar = [
-    carMock,
-    carMock,
-  ]
-
-
+  useEffect(() => {
+    loadCars()
+  }, [])
 
   return (
     <Container>
@@ -48,22 +53,20 @@ export function Home(){
       <Header>
         <HeaderContent>
           <Logo width={RFValue(108)} height={RFValue(12)}/>
-          <TotalCars>Total de 12 carros</TotalCars>
+          <TotalCars>Total de {cars.length} carros</TotalCars>
         </HeaderContent>
       </Header>
 
-      <CarList
-        data={arrayCar}
-        keyExtractor={item => String(item)}
-        renderItem={({item}) => <Car
-          brand={carMock.brand}
-          name={carMock.name}
-          rent={carMock.rent}
-          thumbnail={carMock.thumbnail}
-          onPress={handleConfirmRental}
-        />}
-      />
-      
+      {isLoading ? <Load/> : 
+        <CarList
+          data={cars}
+          keyExtractor={item => item.id}
+          renderItem={({item}) => <Car
+            data={item}
+            onPress={() => handleConfirmRental(item)}
+          />}
+        />
+      }
       
     </Container>
   );
