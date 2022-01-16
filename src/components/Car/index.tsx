@@ -2,8 +2,6 @@ import React from 'react';
 import { CarDTO } from '../../dtos/CarDTO';
 import { RectButtonProps } from 'react-native-gesture-handler';
 
-import GasolineSvg from '../../assets/gasoline.svg'
-
 export interface CarProps extends RectButtonProps{
   data: CarDTO
 }
