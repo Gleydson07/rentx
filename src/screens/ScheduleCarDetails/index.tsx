@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {Feather} from '@expo/vector-icons';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -49,8 +49,9 @@ interface RouteParams {
 
 export function ScheduleCarDetails(){
   const theme = useTheme();
-  const {navigate, goBack} = useNavigation<any>();
   const route = useRoute();
+  const [lockRequestCar, setLockRequestCar] = useState(false)
+  const {navigate, goBack} = useNavigation<any>();
   const {car, dates} = route.params as RouteParams;
 
   const datesFormatted = {
@@ -60,14 +61,22 @@ export function ScheduleCarDetails(){
   }
 
   async function handleConfirmRental(){
+    setLockRequestCar(true)
     try {
-      const response = await api.get(`/schedules/${car.id}`);
+      const response = await api.get(`/schedules_bycars/${car.id}`);
       const unavailable_dates = [
         ...response.data.unavailable_dates,
         ...dates
       ]
 
-      await api.put(`/schedules/${car.id}`, {
+      await api.post(`/schedules_byuser`, {
+        user_id: 1,
+        car,
+        startDate: format(getPlatformDate(new Date(dates[0])), 'dd/MM/yyyy'),
+        endDate: format(getPlatformDate(new Date(dates[dates.length - 1])), 'dd/MM/yyyy')
+      });
+
+      await api.put(`/schedules_bycars/${car.id}`, {
         id: car.id,
         unavailable_dates
       });
@@ -75,6 +84,7 @@ export function ScheduleCarDetails(){
       navigate('ScheduleCompleted');
     } catch (error) {
       console.log(error)
+      setLockRequestCar(false)
       Alert.alert("Não foi possível efetuar o agendamento.")
     }
 
@@ -155,7 +165,14 @@ export function ScheduleCarDetails(){
       </Content>
 
       <Footer>
-        <Button title="Alugar agora" color={theme.colors.success} onPress={handleConfirmRental}/>
+        <Button 
+          title="Alugar agora" 
+          color={theme.colors.success} 
+          onPress={handleConfirmRental}
+          enabled={!lockRequestCar}
+          loading={lockRequestCar}
+          colorLoading={theme.colors.background_secondary}
+        />
       </Footer>
     </Container>
   );
